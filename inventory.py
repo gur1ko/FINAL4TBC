@@ -1,4 +1,6 @@
 import pandas as pd
+import json
+import os
 from datetime import datetime
 
 class Inventory:
@@ -36,7 +38,7 @@ class Inventory:
                 print("Invalid year. Please enter a valid year.")
 
         while True:
-            condition = input("Enter condition(bad/ poor/ fair/ good/ very good/ excellent): ").lower()
+            condition = input("Enter condition (bad/poor/fair/good/very good/excellent): ").lower()
             if condition in ['bad', 'poor', 'fair', 'good', 'very good', 'excellent']:
                 item['Condition'] = condition
                 break
@@ -78,7 +80,62 @@ class Inventory:
         for item in self.collection:
             if item['Index'] == index:
                 print(f"Editing item: {item}")
-                # Implement editing logic here
+                
+                while True:
+                    item_type = input("Enter type (coin/banknote): ").lower()
+                    if item_type in ['coin', 'banknote']:
+                        item['Type'] = item_type
+                        break
+                    else:
+                        print("Invalid type. Please enter 'coin' or 'banknote'.")
+
+                item['Country'] = input("Enter country: ")
+                item['Denomination'] = input("Enter denomination: ")
+                item['Currency'] = input("Enter currency (GEL, USD...): ").upper()
+                
+                while True:
+                    year = input("Enter year: ")
+                    if year.isdigit() and int(year) <= datetime.now().year:
+                        item['Year'] = int(year)
+                        break
+                    else:
+                        print("Invalid year. Please enter a valid year.")
+
+                while True:
+                    condition = input("Enter condition (bad/poor/fair/good/very good/excellent): ").lower()
+                    if condition in ['bad', 'poor', 'fair', 'good', 'very good', 'excellent']:
+                        item['Condition'] = condition
+                        break
+                    else:
+                        print("Invalid condition. Please enter one of: bad, poor, fair, good, very good, excellent.")
+
+                item['Material'] = input("Enter material: ")
+                
+                while True:
+                    acquisition_date = input("Enter date of acquisition (dd/mm/yy): ")
+                    try:
+                        datetime.strptime(acquisition_date, '%d/%m/%y')
+                        item['Date of Acquisition'] = acquisition_date
+                        break
+                    except ValueError:
+                        print("Invalid date format. Please enter date in dd/mm/yy format.")
+
+                while True:
+                    purchase_price = input("Enter purchase price (in GEL): ")
+                    if purchase_price.replace('.', '', 1).isdigit():
+                        item['Purchase Price'] = float(purchase_price)
+                        break
+                    else:
+                        print("Invalid purchase price. Please enter a valid number.")
+
+                while True:
+                    estimated_value = input("Enter estimated value (in GEL): ")
+                    if estimated_value.replace('.', '', 1).isdigit():
+                        item['Estimated Value'] = float(estimated_value)
+                        break
+                    else:
+                        print("Invalid estimated value. Please enter a valid number.")
+
                 print(f"Item {index} updated successfully.")
                 return
         print("Wrong index. Please try again.")
@@ -94,15 +151,16 @@ class Inventory:
 
     def display_collection(self):
         if self.collection:
+            print(f"Your Inventory ({len(self.collection)} items):")
             for item in self.collection:
                 print(f"{item['Index']}: {item}")
         else:
-            print("Collection is empty.")
+            print("Your inventory is empty.")
 
     def export_to_excel(self):
         if self.collection:
             df = pd.DataFrame(self.collection)
-            df.to_excel('collection1.xlsx', index=False)
+            df.to_excel('collection.xlsx', index=False)
             print("Collection exported to collection.xlsx successfully.")
         else:
             print("Collection is empty. Nothing to export.")
