@@ -58,14 +58,12 @@ class Auth:
         if email in self.users:
             print('Email already registered.')
             return False
-
         while True:
             password = input('Enter a password (at least: 8 symbols, one number, one symbol, one big letter): ')
             if self.is_valid_password(password):
                 break
             else:
                 print('Password does not meet the criteria. Please try again.')
-
         self.users[email] = self.hash_password(password)
         self.user_inventories[email] = []
         self.save_users()
