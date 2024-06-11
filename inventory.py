@@ -2,6 +2,7 @@ import pandas as pd
 import json
 import os
 from datetime import datetime
+import statistics
 
 class Inventory:
     def __init__(self):
@@ -164,3 +165,86 @@ class Inventory:
             print("Collection exported to collection.xlsx successfully.")
         else:
             print("Collection is empty. Nothing to export.")
+
+    def search_inventory(self):
+        if not self.collection:
+            print("Your inventory is empty.")
+            return
+
+        search_options = {
+            '1': 'Index',
+            '2': 'Type',
+            '3': 'Country',
+            '4': 'Denomination',
+            '5': 'Currency',
+            '6': 'Year',
+            '7': 'Condition',
+            '8': 'Material',
+            '9': 'Date of Acquisition',
+            '10': 'Purchase Price',
+            '11': 'Estimated Value'
+        }
+
+        print("Search by:")
+        for option, field in search_options.items():
+            print(f"{option}. {field}")
+
+        choice = input("Enter your choice: ")
+
+        if choice in search_options:
+            search_field = search_options[choice]
+            search_value = input(f"Enter the {search_field.lower()} to search for: ")
+
+            matched_items = [item for item in self.collection if str(item[search_field]).lower() == search_value.lower()]
+
+            if matched_items:
+                print(f"Items matching {search_field}: {search_value}")
+                for item in matched_items:
+                    print(f"{item['Index']}: {item}")
+            else:
+                print(f"No items found with {search_field}: {search_value}")
+        else:
+            print("Invalid choice. Please try again.")
+
+    def calculate_statistics(self):
+        if not self.collection:
+            print("Your inventory is empty. No statistics to calculate.")
+            return
+
+        print("Inventory Statistics:")
+        # Calculate mode for categorical fields
+        print("\nMode:")
+        types = [item['Type'] for item in self.collection]
+        print(f"Type: {statistics.mode(types)}")
+
+        countries = [item['Country'] for item in self.collection]
+        print(f"Country: {statistics.mode(countries)}")
+
+        denominations = [item['Denomination'] for item in self.collection]
+        print(f"Denomination: {statistics.mode(denominations)}")
+
+        currencies = [item['Currency'] for item in self.collection]
+        print(f"Currency: {statistics.mode(currencies)}")
+
+        years = [item['Year'] for item in self.collection]
+        print(f"Year: {statistics.mode(years)}")
+
+        conditions = [item['Condition'] for item in self.collection]
+        print(f"Condition: {statistics.mode(conditions)}")
+
+        materials = [item['Material'] for item in self.collection]
+        print(f"Material: {statistics.mode(materials)}")
+
+        # Calculate mean for numerical fields
+        print("\nMean:")
+        purchase_prices = [item['Purchase Price'] for item in self.collection]
+        print(f"Purchase Price: {statistics.mean(purchase_prices):.2f} GEL")
+
+        estimated_values = [item['Estimated Value'] for item in self.collection]
+        print(f"Estimated Value: {statistics.mean(estimated_values):.2f} GEL")
+
+        # Calculate total valuation and total purchase price
+        total_valuation = sum(item['Estimated Value'] for item in self.collection)
+        total_purchase_price = sum(item['Purchase Price'] for item in self.collection)
+        print(f"\nTotal Valuation of the Collection: {total_valuation:.2f} GEL")
+        print(f"Total Purchase Price of the Collection: {total_purchase_price:.2f} GEL")
