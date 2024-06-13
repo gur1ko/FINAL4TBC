@@ -1,7 +1,7 @@
 import hashlib
 import json
 import os
-import re  # Import regular expression module
+import re  
 from inventory import Inventory
 
 class Auth:
